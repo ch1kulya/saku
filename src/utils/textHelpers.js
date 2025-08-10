@@ -22,22 +22,43 @@ window.TextHelpers = {
     },
     
     // Форматирование статуса
-    formatStatus(status, episodesAired, episodesTotal) {
+    formatStatus(status) {
         const statusMap = {
             'released': 'Вышло',
             'ongoing': 'Онгоинг',
             'anons': 'Анонс'
         };
-        
-        let baseStatus = statusMap[status] || status;
-        
-        if (status === 'ongoing' && episodesAired != null && episodesTotal != null) {
-            baseStatus += ` ${episodesAired}/${episodesTotal} эп.`;
-        } else if (status === 'released' && episodesTotal != null) {
-            baseStatus += ` ${episodesTotal} эп.`;
+        return statusMap[status] || status;
+    },
+
+    // Плюрализация для русского языка
+    pluralize(number, one, two, five) {
+        let n = Math.abs(number);
+        n %= 100;
+        if (n >= 5 && n <= 20) {
+            return five;
         }
-        
-        return baseStatus;
+        n %= 10;
+        if (n === 1) {
+            return one;
+        }
+        if (n >= 2 && n <= 4) {
+            return two;
+        }
+        return five;
+    },
+
+    // Форматирование эпизодов
+    formatEpisodes(status, episodesAired, episodesTotal) {
+        if (status === 'ongoing' && episodesAired != null && episodesTotal != null) {
+            const episodesTotalText = this.pluralize(episodesTotal, 'эпизод', 'эпизода', 'эпизодов');
+            return `${episodesAired}/${episodesTotal} ${episodesTotalText}`;
+        }
+        if (status === 'released' && episodesTotal != null) {
+            const episodesTotalText = this.pluralize(episodesTotal, 'эпизод', 'эпизода', 'эпизодов');
+            return `${episodesTotal} ${episodesTotalText}`;
+        }
+        return null;
     },
     
     // Экранирование специальных символов для GraphQL

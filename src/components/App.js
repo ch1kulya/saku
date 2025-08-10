@@ -56,12 +56,13 @@ window.App = {
         
         return m('.container', [
             m(`.search-container${hasResults || hasSearched ? '.has-results' : ''}`, [
-                !hasResults && !hasSearched && m(window.Logo),
-                
-                m(window.SearchInput, {
-                    value: this.searchQuery,
-                    onInput: (e) => this.handleInput(e)
-                })
+                m('.header-content', [
+                    m(window.Logo),
+                    m(window.SearchInput, {
+                        value: this.searchQuery,
+                        onInput: (e) => this.handleInput(e)
+                    })
+                ])
             ]),
             
             m(window.SearchResults, {
