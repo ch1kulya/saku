@@ -1,0 +1,1 @@
+m.mount(document.getElementById('app'), window.App);
