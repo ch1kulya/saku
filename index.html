@@ -2,22 +2,14 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
     <title>saku</title>
     <link rel="stylesheet" href="./styles/main.css">
     <script src="https://unpkg.com/mithril@2.2.15/mithril.min.js"></script>
 </head>
 <body>
     <div id="app"></div>
-
-    <footer>
-        <span>Powered by <a href="https://shikimori.one" target="_blank">Shikimori</a></span>
-        <span class="footer-separator">//</span>
-        <span>&copy; 2025 ch1ka</span>
-        <span class="footer-separator">//</span>
-        <span>Source code on <a href="https://github.com/ch1kulya/saku" target="_blank">GitHub</a></span>
-    </footer>
-
+    <footer id="footer"></footer>
     <script src="./src/utils/debounce.js"></script>
     <script src="./src/utils/textHelpers.js"></script>
     <script src="./src/utils/jaroWinkler.js"></script>
@@ -30,6 +22,7 @@
     <script src="./src/components/SearchInput.js"></script>
     <script src="./src/components/Card.js"></script>
     <script src="./src/components/SearchResults.js"></script>
+    <script src="./src/components/Footer.js"></script>
     <script src="./src/components/App.js"></script>
     <script src="./src/index.js"></script>
 </body>

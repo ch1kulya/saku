@@ -10,29 +10,28 @@ window.SearchResults = {
             return !anime.isCensored;
         });
 
-        // Показываем результаты, если они есть
-        if (filteredResults.length > 0) {
-            return m(
-                '.results',
-                {
-                    class: (loading || isTyping) ? 'is-loading' : ''
-                },
-                filteredResults.map(anime => m(window.Card, { anime }))
-            );
-        }
+        const hasResults = filteredResults.length > 0;
+        const isSearching = loading || isTyping;
         
-        // Показываем загрузку, если результатов пока нет, но идет поиск
-        if (loading || isTyping) {
-            return m('.loading', 'Поиск...');
-        }
+        const showLoadingIndicator = isSearching && !hasResults;
+        const showNoResultsMessage = !isSearching && !hasResults && cleanQuery.length >= window.CONFIG.MIN_SEARCH_LENGTH;
 
-        // Показываем "ничего не найдено" если был поиск, но результатов нет
-        if (cleanQuery.length >= window.CONFIG.MIN_SEARCH_LENGTH && filteredResults.length === 0) {
-            return m('.no-results', [
+        return m('.search-results-wrapper', {
+            key: hasResults ? 'results-present' : 'results-absent'
+        }, [
+            m(`.loading-indicator${showLoadingIndicator ? '.is-visible' : ''}`, 'Поиск...'),
+            
+            m('.results' + (hasResults ? '.is-visible' : '') + (isSearching ? '.is-loading' : ''),
+                filteredResults.map((anime, index) => m(window.Card, {
+                    anime,
+                    class: 'fade-in-stagger',
+                    style: { '--animation-delay': `${index * 50}ms` }
+                }))
+            ),
+            
+            m(`.no-results${showNoResultsMessage ? '.is-visible' : ''}`, [
                 m('.no-results-text', 'Ничего не найдено')
-            ]);
-        }
-        
-        return null;
+            ])
+        ]);
     }
 };

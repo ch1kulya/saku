@@ -59,14 +59,18 @@ window.ShikimoriAPI = {
             if (!flags.noRelevance) {
                 const lowerCaseQuery = cleanQuery.toLowerCase();
                 relevantResults = results.filter(anime => {
-                    const title = anime.russian?.toLowerCase() || anime.name?.toLowerCase() || '';
-                    const similarity = window.JaroWinkler.similarity(lowerCaseQuery, title);
-                    return similarity > 0.8;
+                    const russianTitle = anime.russian?.toLowerCase() || '';
+                    const englishTitle = anime.name?.toLowerCase() || '';
+
+                    const russianSimilarity = russianTitle ? window.JaroWinkler.similarity(lowerCaseQuery, russianTitle) : 0;
+                    const englishSimilarity = englishTitle ? window.JaroWinkler.similarity(lowerCaseQuery, englishTitle) : 0;
+
+                    return russianSimilarity > 0.8 || englishSimilarity > 0.8;
                 });
             }
 
             const sortedResults = [...relevantResults].sort((a, b) => parseFloat(b.score) - parseFloat(a.score));
-            const topResults = sortedResults.slice(0, 6);
+            const topResults = sortedResults.slice(0, window.CONFIG.RESULTS_LIMIT);
 
             if (useCache) {
                 window.LocalStorageCache.set(query, topResults, window.CONFIG.CACHE_TTL);
