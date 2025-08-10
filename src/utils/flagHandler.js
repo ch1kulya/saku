@@ -1,7 +1,8 @@
 window.FlagHandler = {
   flagAliases: {
     showHidden: ['!h', '!hentai'],
-    noCache: ['!nocache']
+    noCache: ['!nocache'],
+    noRelevance: ['!norelevance', '!nr']
   },
 
   parseQuery(query) {

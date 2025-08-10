@@ -1,6 +1,6 @@
 window.ShikimoriAPI = {
     async search(query) {
-        const { cleanQuery, useCache } = window.FlagHandler.parseQuery(query);
+        const { cleanQuery, useCache, flags } = window.FlagHandler.parseQuery(query);
 
         if (!cleanQuery || cleanQuery.length < window.CONFIG.MIN_SEARCH_LENGTH) {
             return [];
@@ -16,7 +16,7 @@ window.ShikimoriAPI = {
         const escapedQuery = window.TextHelpers.escapeQuery(cleanQuery);
         const graphqlQuery = `
             query {
-                animes(search: "${escapedQuery}", limit: ${window.CONFIG.RESULTS_LIMIT}, order: ranked_shiki) {
+                animes(search: "${escapedQuery}", limit: 24) {
                     id
                     name
                     russian
@@ -54,10 +54,24 @@ window.ShikimoriAPI = {
             }
 
             const results = data.data?.animes || [];
-            if (useCache) {
-                window.LocalStorageCache.set(cleanQuery, results, window.CONFIG.CACHE_TTL);
+
+            let relevantResults = results;
+            if (!flags.noRelevance) {
+                const lowerCaseQuery = cleanQuery.toLowerCase();
+                relevantResults = results.filter(anime => {
+                    const title = anime.russian?.toLowerCase() || anime.name?.toLowerCase() || '';
+                    const similarity = window.JaroWinkler.similarity(lowerCaseQuery, title);
+                    return similarity > 0.8;
+                });
             }
-            return results;
+
+            const sortedResults = [...relevantResults].sort((a, b) => parseFloat(b.score) - parseFloat(a.score));
+            const topResults = sortedResults.slice(0, 6);
+
+            if (useCache) {
+                window.LocalStorageCache.set(query, topResults, window.CONFIG.CACHE_TTL);
+            }
+            return topResults;
         } catch (error) {
             console.error('Search error:', error);
             return [];
