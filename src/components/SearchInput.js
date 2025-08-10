@@ -1,6 +1,6 @@
 window.SearchInput = {
     view(vnode) {
-        const { value, onInput, placeholder } = vnode.attrs;
+        const { value, onInput, placeholder, setTooltip, showIcon } = vnode.attrs;
         
         return m('.search-input-wrapper', [
             m('input.search-input', {
@@ -9,7 +9,11 @@ window.SearchInput = {
                 value: value,
                 oninput: onInput,
                 autofocus: true
-            })
+            }),
+            showIcon && m('span.tooltip-trigger-icon', {
+                onmouseenter: () => setTooltip(true),
+                onmouseleave: () => setTooltip(false)
+            }, '?')
         ]);
     }
 };

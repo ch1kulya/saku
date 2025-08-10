@@ -6,6 +6,11 @@ window.App = {
     isTyping: false,
     typingTimeout: null,
     
+    // Состояние тултипа
+    showTooltip: false,
+    tooltipHover: false,
+    tooltipTimeout: null,
+    
     // Debounced поиск
     debouncedSearch: window.debounce(async function(query) {
         const { cleanQuery } = window.FlagHandler.parseQuery(query);
@@ -48,19 +53,56 @@ window.App = {
         
         this.debouncedSearch(this.searchQuery);
     },
-    
+
+    // Логика управления тултипом
+    setTooltip(state) {
+        clearTimeout(this.tooltipTimeout);
+        if (state) {
+            // Показываем тултип после задержки
+            this.tooltipTimeout = setTimeout(() => {
+                this.showTooltip = true;
+                m.redraw();
+            }, 100);
+        } else {
+            // Скрываем тултип после задержки (чтобы успеть навести на него)
+            this.tooltipTimeout = setTimeout(() => {
+                if (!this.tooltipHover) {
+                    this.showTooltip = false;
+                    m.redraw();
+                }
+            }, 200);
+        }
+    },
+
+    setTooltipHover(state) {
+        this.tooltipHover = state;
+        if (!state) {
+            // Если курсор ушел с тултипа, запускаем логику скрытия
+            this.setTooltip(false);
+        }
+    },
+
     view() {
         const { cleanQuery } = window.FlagHandler.parseQuery(this.searchQuery);
         const hasResults = this.results.length > 0;
         const hasSearched = cleanQuery.length >= window.CONFIG.MIN_SEARCH_LENGTH;
-        
+        const showTooltipArea = !hasResults && !hasSearched;
+
         return m('.container', [
             m(`.search-container${hasResults || hasSearched ? '.has-results' : ''}`, [
                 m('.header-content', [
                     m(window.Logo),
                     m(window.SearchInput, {
                         value: this.searchQuery,
-                        onInput: (e) => this.handleInput(e)
+                        onInput: (e) => this.handleInput(e),
+                        // Передаем колбэки и состояние видимости
+                        setTooltip: this.setTooltip.bind(this),
+                        showIcon: showTooltipArea
+                    }),
+                    // Рендерим тултип только когда он нужен, чтобы не занимать место
+                    showTooltipArea && m(window.Tooltip, {
+                        visible: this.showTooltip || this.tooltipHover,
+                        setTooltipHover: this.setTooltipHover.bind(this)
                     })
                 ])
             ]),
