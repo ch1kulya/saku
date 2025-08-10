@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Goldman:wght@700&display=swap');
 * {
     margin: 0;
     padding: 0;
@@ -52,7 +52,8 @@ body {
     font-size: 48px;
     font-weight: 700;
     margin-bottom: 40px;
-    color: #ccc;
+    font-family: 'Goldman', sans-serif;
+    color: #b9b9b9;
     letter-spacing: -1px;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     text-shadow: 0 2px 3px rgba(255, 255, 255, 0.15);
@@ -425,6 +426,11 @@ body {
 
 /* Footer */
 footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
     position: sticky;
     width: 100%;
     text-align: center;
@@ -494,5 +500,13 @@ footer a:hover {
     
     .result-description {
         font-size: 12px;
+    }
+
+    footer {
+        flex-direction: column;
+    }
+
+    .footer-separator {
+        display: none;
     }
 }

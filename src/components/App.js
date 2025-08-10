@@ -81,6 +81,10 @@ window.App = {
             this.setTooltip(false);
         }
     },
+toggleTooltip() {
+        this.showTooltip = !this.showTooltip;
+        m.redraw();
+    },
 
     view() {
         const { cleanQuery } = window.FlagHandler.parseQuery(this.searchQuery);
@@ -97,6 +101,7 @@ window.App = {
                         onInput: (e) => this.handleInput(e),
                         // Передаем колбэки и состояние видимости
                         setTooltip: this.setTooltip.bind(this),
+                        toggleTooltip: this.toggleTooltip.bind(this),
                         showIcon: showTooltipArea
                     }),
                     // Рендерим тултип только когда он нужен, чтобы не занимать место
